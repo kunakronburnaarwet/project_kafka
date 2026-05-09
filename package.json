@@ -1,0 +1,15 @@
+{
+  "name": "project_kafka",
+  "version": "0.1.0",
+  "description": "Kafka demo project for local experimentation",
+  "private": true,
+  "scripts": {
+    "start:producer": "node src/producer.js",
+    "start:consumer": "node src/consumer.js",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.0"
+  }
+}
