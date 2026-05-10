@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Chat Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Real-time Chat Test</h1>
+
+    <div>
+        <h2>Register User</h2>
+        <input type="text" id="regUsername" placeholder="Username">
+        <input type="password" id="regPassword" placeholder="Password">
+        <button onclick="register()">Register</button>
+    </div>
+
+    <div>
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p id="token"></p>
+    </div>
+
+    <div>
+        <h2>Chat</h2>
+        <input type="text" id="room" placeholder="Room name" value="general">
+        <button onclick="joinRoom()">Join Room</button>
+        <br>
+        <input type="text" id="message" placeholder="Message">
+        <button onclick="sendMessage()">Send Message</button>
+        <br>
+        <button onclick="getMessages()">Get Messages</button>
+        <div id="messages"></div>
+    </div>
+
+    <script>
+        let socket;
+        let currentUser = '';
+
+        function register() {
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+
+            fetch('http://localhost:3001/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => alert('Registered: ' + JSON.stringify(data)))
+            .catch(err => alert('Error: ' + err));
+        }
+
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            fetch('http://localhost:3001/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('token').textContent = 'Token: ' + data.access_token;
+                currentUser = username;
+                connectSocket();
+            })
+            .catch(err => alert('Error: ' + err));
+        }
+
+        function connectSocket() {
+            socket = io('http://localhost:3001');
+
+            socket.on('joinedRoom', (room) => {
+                document.getElementById('messages').innerHTML += `<p>Joined room: ${room}</p>`;
+            });
+
+            socket.on('message', (msg) => {
+                document.getElementById('messages').innerHTML += `<p>${msg.sender}: ${msg.content}</p>`;
+            });
+
+            socket.on('messages', (msgs) => {
+                document.getElementById('messages').innerHTML = '';
+                msgs.forEach(msg => {
+                    document.getElementById('messages').innerHTML += `<p>${msg.sender}: ${msg.content}</p>`;
+                });
+            });
+        }
+
+        function joinRoom() {
+            const room = document.getElementById('room').value;
+            socket.emit('joinRoom', room);
+        }
+
+        function sendMessage() {
+            const content = document.getElementById('message').value;
+            const room = document.getElementById('room').value;
+            socket.emit('sendMessage', { content, sender: currentUser, room });
+            document.getElementById('message').value = '';
+        }
+
+        function getMessages() {
+            const room = document.getElementById('room').value;
+            socket.emit('getMessages', room);
+        }
+    </script>
+</body>
+</html>
