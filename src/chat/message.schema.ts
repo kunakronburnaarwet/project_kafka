@@ -5,16 +5,16 @@ export type MessageDocument = Message & Document;
 
 @Schema()
 export class Message {
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   content: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   sender: string;
 
-  @Prop({ required: true })
+  @Prop({ type: String, required: true })
   room: string;
 
-  @Prop({ default: Date.now })
+  @Prop({ type: Date, default: Date.now })
   timestamp: Date;
 }
 
