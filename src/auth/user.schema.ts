@@ -6,13 +6,13 @@ export type UserDocument = User & Document;
 @Schema()
 export class User {
   @Prop({ required: true, unique: true })
-  username: string;
+  username: string | undefined;
 
   @Prop({ required: true })
-  password: string;
+  password: string | undefined;
 
   @Prop({ default: Date.now })
-  createdAt: Date;
+  createdAt: Date | undefined;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

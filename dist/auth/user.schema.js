@@ -19,15 +19,15 @@ let User = class User {
 exports.User = User;
 __decorate([
     (0, mongoose_1.Prop)({ required: true, unique: true }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], User.prototype, "username", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ required: true }),
-    __metadata("design:type", String)
+    __metadata("design:type", Object)
 ], User.prototype, "password", void 0);
 __decorate([
     (0, mongoose_1.Prop)({ default: Date.now }),
-    __metadata("design:type", Date)
+    __metadata("design:type", Object)
 ], User.prototype, "createdAt", void 0);
 exports.User = User = __decorate([
     (0, mongoose_1.Schema)()
